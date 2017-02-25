@@ -234,11 +234,13 @@ map <silent> <leader>kb <ESC>:NERDTreeToggle<CR>
 map <silent> <leader>rev :NERDTreeFind<CR>
 let NERDTreeMapOpenSplit = 'x'
 let NERDTreeMapOpenVSplit = 'v'
+let NERDTreeShowHidden=1
+
 
 "========================================================
 " MAPPING FZF
 "========================================================
-let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
 map <c-p> <ESC>:Files<CR>
 map <c-o> <ESC>:Tags<CR>
 map <silent> <leader>hh <ESC>:History<CR>
