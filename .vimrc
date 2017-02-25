@@ -198,15 +198,9 @@ endfunction "}}}
 
 " ========================== Neomake =============================
 
+let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
 let g:neomake_javascript_enabled_makers = ['eslint']
 let g:neomake_jsx_enabled_makers = ['eslint']
-if findfile('.eslintrc', '.;') ==# ''
-  let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
-  let g:neomake_javascript_enabled_makers = []
-  let g:neomake_jsx_enabled_makers = []
-endif
-" let g:neomake_error_sign = {'text': '💧 ', 'texthl': 'NeomakeWarningMsg'}
-" let g:neomake_warning_sign = {'text': '💧 ', 'texthl': 'NeomakeErrorMsg'}
 
 " ========================== Text =============================
 
@@ -228,7 +222,7 @@ hi jsStorageClass cterm=italic
 hi jsOperator cterm=italic
 
 "========================================================
-" MAPPING NERDTree
+" NERDTree
 "========================================================
 map <silent> <leader>kb <ESC>:NERDTreeToggle<CR>
 map <silent> <leader>rev :NERDTreeFind<CR>
@@ -238,7 +232,7 @@ let NERDTreeShowHidden=1
 
 
 "========================================================
-" MAPPING FZF
+" FZF
 "========================================================
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
 map <c-p> <ESC>:Files<CR>
@@ -252,7 +246,7 @@ map <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), fzf#vim#layout(expand("<ban
 map <silent> <leader>mm <ESC>:Commands<CR>
 
 "========================================================
-" MAPPING EASYMOTION
+" EASYMOTION
 "========================================================
 let g:EasyMotion_do_mapping = 0
 let g:EasyMotion_smartcase = 1
@@ -261,7 +255,7 @@ omap / <Plug>(easymotion-tn)
 nmap <silent> <tab> <Plug>(easymotion-w)
 
 "========================================================
-" MAPPING GIT
+" GIT
 "========================================================
 map <silent> gs :Gstatus<CR>
 map <silent> gd :Gdiff<CR>
@@ -269,7 +263,7 @@ map <silent> gb :Gblame<CR>
 map <silent> ghub :Gbrowse<CR>
 
 "========================================================
-" MAPPING MISC
+" MISC
 "========================================================
 nnoremap <silent> <CR> <ESC>:noh<CR>
 map <silent> <leader>u :UndotreeToggle<CR>
