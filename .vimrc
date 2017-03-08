@@ -5,7 +5,7 @@ call plug#begin()
 
 " essential
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'scrooloose/nerdcommenter', { 'on': 'NERDTreeToggle' }
+Plug 'scrooloose/nerdcommenter'
 
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -71,8 +71,10 @@ filetype on
 syntax on
 filetype indent on
 filetype plugin on
-set smartindent
-set autoindent
+" set smartindent
+" set autoindent
+set noswapfile
+set backupcopy=yes
 set hlsearch
 set bs=2
 set ai
@@ -80,7 +82,6 @@ set ruler
 set linespace=1
 set gfn=Operator\ Mono\ Book:h14
 let g:auto_ctags = 1
-set wrap linebreak nolist
 set breakindent
 set nofoldenable
 set tags=./tags;,tags;
@@ -97,7 +98,7 @@ set lazyredraw
 set laststatus=2
 set encoding=utf8
 set guifont=Operator\ Mono\ Book:h14
-set textwidth=80
+" set textwidth=80
 colorscheme one
 set background=dark
 
