@@ -4,14 +4,17 @@ filetype off
 call plug#begin()
 
 " essential
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
+Plug 'tpope/vim-commentary'
+Plug 'EvanDotPro/nerdtree-chmod', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
 Plug 'tpope/vim-fugitive'
 Plug 'editorconfig/editorconfig-vim'
+
+Plug 'Yggdroot/indentLine'
 
 " editing, navigating
 Plug 'tpope/vim-surround'
@@ -57,6 +60,14 @@ Plug 'carlitux/deoplete-ternjs',  { 'do': 'npm install --cache-min Infinity --lo
 Plug 'ternjs/tern_for_vim',       { 'do': 'npm install --cache-min Infinity --loglevel http' }
 Plug 'neovim/node-host',          { 'do': 'npm install --cache-min Infinity --loglevel http' }
 
+" Markdown
+" Plug 'godlygeek/tabular'
+" Plug 'plasticboy/vim-markdown'
+Plug 'JamshedVesuna/vim-markdown-preview'
+
+" Filetypes
+Plug 'ekalinin/Dockerfile.vim'
+
 " look & feel
 Plug 'vim-airline/vim-airline'
 Plug 'flazz/vim-colorschemes'
@@ -68,7 +79,7 @@ call plug#end()
 filetype on
 
 " ======================== General Config ========================
-syntax on
+syntax enable
 filetype indent on
 filetype plugin on
 " set smartindent
@@ -99,6 +110,7 @@ set laststatus=2
 set encoding=utf8
 set guifont=Operator\ Mono\ Book:h14
 " set textwidth=80
+set autoread
 colorscheme one
 set background=dark
 
@@ -118,17 +130,15 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
 "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
 "(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
-if (empty($TMUX))
-  if (has("nvim"))
+if (has("nvim"))
   "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-  endif
-  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-  if (has("termguicolors"))
-    set termguicolors
-  endif
+endif
+"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+if (has("termguicolors"))
+  set termguicolors
 endif
 
 let g:indentLine_enabled = 0
@@ -148,6 +158,8 @@ if has("autocmd")
   autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
   autocmd FileType markdown set textwidth=80
   autocmd FileType markdown set formatoptions-=t
+  au FocusGained,BufEnter * :silent! !
+  "au FocusLost,WinLeave * :silent! noautocmd w
 endif
 let g:webdevicons_enable_ctrlp = 1
 let g:move_key_modifier = 'C'
@@ -160,9 +172,14 @@ let g:fzf_tags_command = 'ctags -R --exclude=.git --exclude=node_modules'
 " Colors, completion, statusbar, linting, and all other custom settings
 " ================================================================
 
+let g:indentLine_color_term = 239
+let g:indentLine_enabled = 1
+let g:indentLine_char = '¦'
+
 " ========================== Airline =============================
 
 let g:airline_theme='one'
+"let g:airline#extensions#tabline#enabled = 1
 " let g:Powerline_symbols = 'fancy'
 " let g:airline_powerline_fonts = 1
 " let g:airline_symbols = {}
@@ -230,6 +247,7 @@ map <silent> <leader>rev :NERDTreeFind<CR>
 let NERDTreeMapOpenSplit = 'x'
 let NERDTreeMapOpenVSplit = 'v'
 let NERDTreeShowHidden=1
+let NERDTreeIgnore = ['\.DS_Store$']
 
 
 "========================================================
@@ -261,7 +279,25 @@ nmap <silent> <tab> <Plug>(easymotion-w)
 map <silent> gs :Gstatus<CR>
 map <silent> gd :Gdiff<CR>
 map <silent> gb :Gblame<CR>
+map <silent> gp :Gpush<CR>
 map <silent> ghub :Gbrowse<CR>
+
+" fugitive git bindings
+nnoremap <space>ga :Git add %:p<CR><CR>
+nnoremap <space>gs :Gstatus<CR>
+nnoremap <space>gc :Gcommit -v -q<CR>
+nnoremap <space>gt :Gcommit -v -q %:p<CR>
+nnoremap <space>gd :Gdiff<CR>
+nnoremap <space>ge :Gedit<CR>
+nnoremap <space>gr :Gread<CR>
+nnoremap <space>gw :Gwrite<CR><CR>
+nnoremap <space>gl :silent! Glog<CR>:bot copen<CR>
+nnoremap <space>gp :Ggrep<Space>
+nnoremap <space>gm :Gmove<Space>
+nnoremap <space>gb :Git branch<Space>
+nnoremap <space>go :Git checkout<Space>
+nnoremap <space>gps :Dispatch! git push<CR>
+nnoremap <space>gpl :Dispatch! git pull<CR>
 
 "========================================================
 " MISC
@@ -271,3 +307,46 @@ map <silent> <leader>u :UndotreeToggle<CR>
 map <silent> <leader><leader> <C-^><CR>
 map <leader>rr :source ~/.vimrc<CR>
 
+" buffer
+nnoremap <leader>s :write<CR>
+nnoremap <leader>bn :bn<CR>
+nnoremap <leader>bp :bp<CR>
+nnoremap <leader>bw :bw<CR>
+nnoremap <leader>bc :bd<CR>
+nnoremap <C-b> :ls<CR>:b<Space>
+
+" autocomplete
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" Odd file syntax
+augroup filetypedetect
+  au BufRead,BufNewFile *.pc set filetype=c
+  au BufRead,BufNewFile Dangerfile set filetype=ruby
+  au BufRead,BufNewFile .eslintrc set filetype=json
+  au BufRead,BufNewFile .babelrc set filetype=json
+augroup END
+
+" resize pane
+nnoremap <silent> <Leader>= :exe "vertical resize +5"<CR>
+nnoremap <silent> <Leader>- :exe "vertical resize -5"<CR>
+
+" enable flow syntax
+let g:javascript_plugin_flow = 1
+
+" flow
+let g:flow#autoclose = 1
+
+" filenames like *.xml, *.html, *.xhtml, ...
+let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.js"
+
+" markdown no folding please
+let g:vim_markdown_folding_disabled = 1
+
+" mouse
+set mouse=a
+
+" markdown preview
+let vim_markdown_preview_github=1
+let vim_markdown_preview_hotkey='<leader>md'
