@@ -30,6 +30,7 @@ Plug 'Raimondi/delimitMate'
 
 " eslint (not really)
 Plug 'neomake/neomake'
+Plug 'benjie/neomake-local-eslint.vim'
 
 " deoplete
 if has('nvim')
@@ -59,6 +60,11 @@ Plug 'othree/jspc.vim'
 Plug 'carlitux/deoplete-ternjs',  { 'do': 'npm install --cache-min Infinity --loglevel http -g tern' }
 Plug 'ternjs/tern_for_vim',       { 'do': 'npm install --cache-min Infinity --loglevel http' }
 Plug 'neovim/node-host',          { 'do': 'npm install --cache-min Infinity --loglevel http' }
+" Plug 'prettier/vim-prettier', {
+"       \ 'do': 'yarn install',
+"       \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql'] }
+
+Plug 'Galooshi/vim-import-js'
 
 " Markdown
 " Plug 'godlygeek/tabular'
@@ -154,7 +160,6 @@ if has("autocmd")
   autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
   autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
   autocmd BufWritePre * StripWhitespace
-  autocmd! BufWritePost * Neomake
   autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
   autocmd FileType markdown set textwidth=80
   autocmd FileType markdown set formatoptions-=t
@@ -179,7 +184,7 @@ let g:indentLine_char = '¦'
 " ========================== Airline =============================
 
 let g:airline_theme='one'
-"let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#enabled = 1
 " let g:Powerline_symbols = 'fancy'
 " let g:airline_powerline_fonts = 1
 " let g:airline_symbols = {}
@@ -201,24 +206,26 @@ let g:deoplete#sources_ = ['buffer','tag']
 " 3. Otherwise, if preceding chars are whitespace, insert tab char
 " 4. Otherwise, start manual autocomplete
 imap <silent><expr><Tab> pumvisible() ? "\<C-n>"
-\ : (neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)"
-\ : (<SID>is_whitespace() ? "\<Tab>"
-\ : deoplete#mappings#manual_complete()))
+      \ : (neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)"
+      \ : (<SID>is_whitespace() ? "\<Tab>"
+      \ : deoplete#mappings#manual_complete()))
 smap <silent><expr><Tab> pumvisible() ? "\<C-n>"
-\ : (neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)"
-\ : (<SID>is_whitespace() ? "\<Tab>"
-\ : deoplete#mappings#manual_complete()))
+      \ : (neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)"
+      \ : (<SID>is_whitespace() ? "\<Tab>"
+      \ : deoplete#mappings#manual_complete()))
 inoremap <expr><S-Tab>  pumvisible() ? "\<C-p>" : "\<C-h>"
 function! s:is_whitespace() "{{{
-let col = col('.') - 1
-return ! col || getline('.')[col - 1] =~? '\s'
+  let col = col('.') - 1
+  return ! col || getline('.')[col - 1] =~? '\s'
 endfunction "}}}
 
 " ========================== Neomake =============================
 
-let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
+" let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
 let g:neomake_javascript_enabled_makers = ['eslint']
 let g:neomake_jsx_enabled_makers = ['eslint']
+autocmd! BufWritePost * Neomake
+
 
 " ========================== Text =============================
 
@@ -305,7 +312,7 @@ nnoremap <space>gpl :Dispatch! git pull<CR>
 nnoremap <silent> <CR> <ESC>:noh<CR>
 map <silent> <leader>u :UndotreeToggle<CR>
 map <silent> <leader><leader> <C-^><CR>
-map <leader>rr :source ~/.vimrc<CR>
+map <leader>rr :source ~/.config/nvim/init.vim<CR>
 
 " buffer
 nnoremap <leader>s :write<CR>
@@ -350,3 +357,7 @@ set mouse=a
 " markdown preview
 let vim_markdown_preview_github=1
 let vim_markdown_preview_hotkey='<leader>md'
+
+" Prettier
+" let g:prettier#autoformat = 0
+" autocmd BufWritePre *.js,*.json,*.css,*.scss,*.less,*.graphql Prettier
