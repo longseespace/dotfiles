@@ -28,6 +28,9 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'matze/vim-move'
 Plug 'Raimondi/delimitMate'
 
+" async
+Plug 'tpope/vim-dispatch'
+
 " eslint (not really)
 Plug 'neomake/neomake'
 Plug 'benjie/neomake-local-eslint.vim'
